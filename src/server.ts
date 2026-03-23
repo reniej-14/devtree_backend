@@ -10,6 +10,7 @@ connectDB()
 // Leer datos de formularios
 app.use(express.json())
 
+// Routes
 app.use('/', router)
 
 
