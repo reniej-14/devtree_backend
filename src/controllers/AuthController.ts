@@ -1,7 +1,8 @@
 import { Request, Response } from "express"
 import slug from 'slug'
 import User from "../config/models/User"
-import { hashPassword } from "../utils/auth"
+import { checkPassword, hashPassword } from "../utils/auth"
+import { check } from "express-validator"
 
 export class AuthController {
 
@@ -28,6 +29,30 @@ export class AuthController {
 
             await user.save()
             res.status(201).send('Usuario agregado correctamente')
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
+    static login = async (req: Request, res: Response) => {
+        try {
+            const { email, password } = req.body
+
+            // Revisar si el usuario está registrado
+            const user = await User.findOne({email})
+            if (!user) {
+                const error = new Error('El usuario no existe')
+                return res.status(404).json({error: error.message})
+            }
+
+            // Comprobar el password
+            const isPasswordCorrect = await checkPassword(password, user.password)
+            if (!isPasswordCorrect) {
+                const error = new Error('Password incorrecto')
+                return res.status(401).json({error: error.message})
+            }
+
+            res.send('Autenticado...')
         } catch (error) {
             res.status(500).json({error: 'Hubo un error'})
         }
