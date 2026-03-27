@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import slug from 'slug'
-import User from "../config/models/User"
+import User from "../models/User"
 import { checkPassword, hashPassword } from "../utils/auth"
 import { check } from "express-validator"
 
