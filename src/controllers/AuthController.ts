@@ -3,6 +3,7 @@ import slug from 'slug'
 import User from "../models/User"
 import { checkPassword, hashPassword } from "../utils/auth"
 import { check } from "express-validator"
+import { generateJWT } from "../utils/jwt"
 
 export class AuthController {
 
@@ -52,7 +53,9 @@ export class AuthController {
                 return res.status(401).json({error: error.message})
             }
 
-            res.send('Autenticado...')
+            const token = generateJWT({id: user._id})
+            res.send(token)
+
         } catch (error) {
             res.status(500).json({error: 'Hubo un error'})
         }
