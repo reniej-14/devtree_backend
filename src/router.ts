@@ -34,4 +34,8 @@ router.post('/auth/login',
     AuthController.login
 )
 
+router.get('/user', 
+    AuthController.getUser
+)
+
 export default router

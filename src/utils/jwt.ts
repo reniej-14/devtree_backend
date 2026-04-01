@@ -6,3 +6,4 @@ export const generateJWT = (payload: JwtPayload) => {
     })
     return token
 }
+
