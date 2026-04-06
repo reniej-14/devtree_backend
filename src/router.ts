@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body } from 'express-validator'
 import { AuthController } from "./controllers/AuthController";
 import { handleInputErrors } from "./middleware/validation";
+import { authenticate } from "./middleware/auth";
 
 const router = Router()
 
@@ -34,8 +35,21 @@ router.post('/auth/login',
     AuthController.login
 )
 
-router.get('/user', 
+router.get('/user',
+    authenticate,
     AuthController.getUser
+)
+
+router.patch('/user', 
+    body('handle')
+        .notEmpty()
+        .withMessage('El handle no puede ir vacío'),
+    body('description')
+        .notEmpty()
+        .withMessage('La descripción no puede ir vacía'),
+    handleInputErrors,
+    authenticate,
+    AuthController.updateProfile
 )
 
 export default router

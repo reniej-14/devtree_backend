@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
 import slug from 'slug'
-import jwt from 'jsonwebtoken'
 import User from "../models/User"
 import { checkPassword, hashPassword } from "../utils/auth"
 import { generateJWT } from "../utils/jwt"
@@ -62,32 +61,27 @@ export class AuthController {
     }
 
     static getUser = async (req: Request, res: Response) => {
-        const bearer = req.headers.authorization
+        res.json(req.user)
+    }
 
-        if (!bearer) {
-            const error = new Error('No autorizado')
-            return res.status(401).json({error: error.message})
-        }
-
-        const [, token] = bearer.split(' ')
-        if (!token) {
-            const error = new Error('No autorizado')
-            return res.status(401).json({error: error.message})
-        }
-
+    static updateProfile = async (req: Request, res: Response) => {
         try {
-            const result = jwt.verify(token, process.env.JWT_SECRET)
-            if (typeof result === 'object' && result.id) {
-                const user = await User.findById(result.id).select('name handle email')
-                if (!user) {
-                    const error = new Error('El usuario no existe')
-                    return res.status(404).json({error: error.message})
-                }
+            const { description  } = req.body
 
-                res.json(user)
+            const handle = slug(req.body.handle, '')
+            const handleExist = await User.findOne({handle})
+            if (handleExist && handleExist.email !== req.user.email) {
+                const error = new Error('Nombre de usuario no disponible')
+                return res.status(409).json({error: error.message})
             }
+
+            // Actualizar el usuario
+            req.user.description = description
+            req.user.handle = handle
+            await req.user.save()
+            res.send('Perfil actualizado correctamente')
         } catch (error) {
-            res.status(500).json('Token no válido')
+            res.status(500).json({error: 'Hubo un error'})
         }
     }
 }

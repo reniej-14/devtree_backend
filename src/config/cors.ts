@@ -9,7 +9,7 @@ export const corsConfig : CorsOptions = {
         }
 
         if (whiteList.includes(origin)) {
-            console.log('Permitir conexion')
+            //console.log('Permitir conexion')
             callback(null, true)
         } else {
             console.log('Denegar la conexion')
