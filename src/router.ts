@@ -52,4 +52,9 @@ router.patch('/user',
     AuthController.updateProfile
 )
 
+router.post('/image',
+    authenticate,
+    AuthController.uploadImage
+)
+
 export default router
