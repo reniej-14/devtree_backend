@@ -52,9 +52,13 @@ router.patch('/user',
     AuthController.updateProfile
 )
 
-router.post('/image',
+router.post('/user/image',
     authenticate,
     AuthController.uploadImage
+)
+
+router.get('/:handle', 
+    AuthController.getUserByHandle
 )
 
 export default router

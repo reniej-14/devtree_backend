@@ -69,7 +69,7 @@ export class AuthController {
 
     static updateProfile = async (req: Request, res: Response) => {
         try {
-            const { description  } = req.body
+            const { description, links } = req.body
 
             const handle = slug(req.body.handle, '')
             const handleExist = await User.findOne({handle})
@@ -81,6 +81,7 @@ export class AuthController {
             // Actualizar el usuario
             req.user.description = description
             req.user.handle = handle
+            req.user.links = links
             await req.user.save()
             res.send('Perfil actualizado correctamente')
         } catch (error) {
@@ -106,6 +107,21 @@ export class AuthController {
                     }
                 })
             })
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
+
+    static getUserByHandle = async (req: Request, res: Response) => { 
+        try {
+            const { handle } = req.params
+            const user = await User.findOne({handle}).select('-_id -__v -email -password')
+            if (!user) {
+                const error = new Error('El usuario no existe')
+                return res.status(404).json({error: error.message})
+            }
+
+            res.json(user)
         } catch (error) {
             res.status(500).json({error: 'Hubo un error'})
         }
