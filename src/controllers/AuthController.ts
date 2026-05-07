@@ -126,4 +126,18 @@ export class AuthController {
             res.status(500).json({error: 'Hubo un error'})
         }
     }
+
+    static searchByHandle = async (req: Request, res: Response) => {
+        try {
+            const { handle } = req.body
+            const userExist = await User.findOne({handle})
+            if (userExist) {
+                const error = new Error(`${handle} ya está registrado`)
+                return res.status(500).json({error: error.message})
+            }
+            res.send(`${handle} está disponible`)
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error'})
+        }
+    }
 }

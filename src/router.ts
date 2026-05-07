@@ -44,9 +44,6 @@ router.patch('/user',
     body('handle')
         .notEmpty()
         .withMessage('El handle no puede ir vacío'),
-    body('description')
-        .notEmpty()
-        .withMessage('La descripción no puede ir vacía'),
     handleInputErrors,
     authenticate,
     AuthController.updateProfile
@@ -59,6 +56,14 @@ router.post('/user/image',
 
 router.get('/:handle', 
     AuthController.getUserByHandle
+)
+
+router.post('/search',
+    body('handle')
+        .notEmpty()
+        .withMessage('El handle no puede ir vacio'),
+    handleInputErrors,
+    AuthController.searchByHandle
 )
 
 export default router
